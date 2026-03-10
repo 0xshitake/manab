@@ -47,7 +47,7 @@ Android application for managing Magic: The Gathering and Pokemon TCG card colle
 > Make the app useful for browsing cards and checking prices, even without a collection.
 
 - Scryfall bulk data import pipeline (download JSON → parse → insert into local DB)
-- TCGdex API integration (Pokemon cards, English + Spanish)
+- TCGdex API integration (Pokemon cards)
 - Local SQLite database via Drift (type-safe, reactive streams, built-in migrations)
 - First launch: pick game mode → extract bundled card DB → ready to browse
 - Card search screen (text search, scoped to active game mode)
@@ -176,7 +176,6 @@ Android application for managing Magic: The Gathering and Pokemon TCG card colle
 
 ### Phase 7 — Future / Nice-to-Have
 
-- Multi-language card name search (search Spanish name, find English card)
 - OCR fallback for cards that fail hash matching
 - Foil detection heuristics (multi-frame voting)
 - Barcode/QR scanning for sealed products (set identification)
@@ -300,14 +299,14 @@ CachedCard (local card database cache)
   ├── priceFoilUsd: Decimal [nullable]
   ├── priceFoilEur: Decimal [nullable]
   ├── priceUpdatedAt: Timestamp [nullable]
-  ├── language: String
   └── cachedAt: Timestamp
 
 CardHash (recognition index)
   ├── cardId: String (FK → CachedCard)
   ├── game: Enum(MTG, POKEMON)
   ├── phashValue: Long (64-bit perceptual hash)
-  └── setCode: String (for set-locking optimization)
+  ├── setCode: String (for set-locking optimization)
+  └── INDEX: (game, setCode, phashValue)  ← compound index for set-locked queries
 ```
 
 ### Card Recognition Pipeline
@@ -415,7 +414,7 @@ Manabox's APK proves a pure OpenCV approach works at production scale (100k+ car
 **Build process (local script `tool/build_card_db.dart`, not on-device):**
 
 1. Download Scryfall bulk data JSON (~500MB for default cards)
-2. Download TCGdex card data via API (all English + Spanish cards)
+2. Download TCGdex card data via API (all English cards)
 3. For each card, download the art crop image:
    - Scryfall: `art_crop` format (varies, JPG) — CDN has no rate limit
    - TCGdex: `high.webp` then crop art region
@@ -461,16 +460,6 @@ dart run tool/build_card_db.dart --game=mtg --delta
 **Output:** `assets/cards.db` (compressed) → bundled into the APK at build time.
 
 This is a Phase 3 deliverable but should be prototyped early (Phase 0/1) to validate the hash quality.
-
-### Language Support
-
-| Feature | English | Spanish | Other |
-|---|---|---|---|
-| Card search | Yes | Yes | No (Phase 7) |
-| Card names in DB | Yes | Yes (via TCGdex `es` + Scryfall `lang:es`) | No |
-| UI strings | Yes | Yes | No |
-| Scanner | Language-agnostic (artwork-based) | Same | Same |
-| Per-card language tag | Yes | Yes | Yes (manual entry) |
 
 ### Export Format
 
