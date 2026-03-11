@@ -1,0 +1,51 @@
+name: manab
+description: "TCG Collection Manager — Magic: The Gathering and Pokemon card collections with camera-based recognition."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Camera
+  camera: ^0.11.1
+
+  # Computer Vision
+  opencv_dart: ^2.2.1
+
+  # State Management
+  flutter_riverpod: ^3.0.0
+  riverpod_annotation: ^3.0.0
+
+  # Database
+  drift: ^2.25.0
+  sqlite3_flutter_libs: ^0.5.31
+
+  # Routing
+  go_router: ^15.1.0
+
+  # Networking
+  dio: ^5.8.0
+
+  # Images
+  cached_network_image: ^3.4.1
+
+  # Utilities
+  uuid: ^4.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.15
+  drift_dev: ^2.25.0
+  riverpod_generator: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
