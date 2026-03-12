@@ -269,25 +269,35 @@ class ScannerViewModel extends Notifier<ScannerState> {
       final cardSize = (rgba.cols, rgba.rows);
       rgba.dispose();
 
-      // 4. Crop art region and compute hash.
-      final artCrop = _scanner.cropArtRegion(warped, state.gameMode);
-      final hash = _scanner.computeHash(artCrop);
-      artCrop.dispose();
-      warped.dispose();
-
+      // 4. Update display immediately (detection + warp succeed).
       sw.stop();
-
       state = state.copyWith(
         detectionResult: detection,
         croppedCardBytes: rgbaBytes,
         croppedCardSize: cardSize,
         processingTimeMs: sw.elapsedMilliseconds,
         debugInfo: '${width}x$height FOUND | ${sw.elapsedMilliseconds}ms',
-        isIdentifying: true,
       );
 
-      // 5. Look up hash in database.
-      await _identifyCard(hash);
+      // 5. Crop art region and compute hash (may fail if contrib unavailable).
+      try {
+        final artCrop = _scanner.cropArtRegion(warped, state.gameMode);
+        final hash = _scanner.computeHash(artCrop);
+        artCrop.dispose();
+        warped.dispose();
+
+        state = state.copyWith(isIdentifying: true);
+
+        // 6. Look up hash in database.
+        await _identifyCard(hash);
+      } catch (e) {
+        warped.dispose();
+        developer.log('Hash/identify error: $e');
+        state = state.copyWith(
+          debugInfo: '${state.debugInfo} | hash err: $e',
+          isIdentifying: false,
+        );
+      }
     } catch (e, st) {
       sw.stop();
       developer.log('Frame processing error: $e', stackTrace: st);
