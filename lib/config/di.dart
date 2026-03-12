@@ -10,9 +10,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../data/database/app_database.dart';
 import '../data/database/daos/binders_dao.dart';
 import '../data/database/daos/card_entries_dao.dart';
+import '../data/database/daos/card_hashes_dao.dart';
 import '../data/database/daos/cards_dao.dart';
 import '../data/repositories/binder_repository.dart';
 import '../data/repositories/card_repository.dart';
+import '../data/repositories/scanner_repository.dart';
 import '../data/services/export_service.dart';
 import '../data/services/scryfall_api_service.dart';
 import '../data/services/scanner_service.dart';
@@ -52,6 +54,10 @@ final cardEntriesDaoProvider = Provider<CardEntriesDao>((ref) {
   return ref.watch(appDatabaseProvider).cardEntriesDao;
 });
 
+final cardHashesDaoProvider = Provider<CardHashesDao>((ref) {
+  return ref.watch(appDatabaseProvider).cardHashesDao;
+});
+
 // --- API Services ---
 
 final scryfallApiServiceProvider = Provider<ScryfallApiService>((ref) {
@@ -76,6 +82,13 @@ final binderRepositoryProvider = Provider<BinderRepository>((ref) {
   return BinderRepositoryImpl(
     bindersDao: ref.watch(bindersDaoProvider),
     cardEntriesDao: ref.watch(cardEntriesDaoProvider),
+  );
+});
+
+final scannerRepositoryProvider = Provider<ScannerRepository>((ref) {
+  return ScannerRepositoryImpl(
+    cardHashesDao: ref.watch(cardHashesDaoProvider),
+    cardsDao: ref.watch(cardsDaoProvider),
   );
 });
 

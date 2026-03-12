@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:manab/domain/card.dart';
+import 'package:manab/domain/card_hash.dart';
 
 import 'db_packer.dart';
+import 'phash_computer.dart';
 import 'scryfall_client.dart';
 import 'tcgdex_client.dart';
 
@@ -13,16 +15,20 @@ import 'tcgdex_client.dart';
 ///   dart run tool/build_card_db.dart --game=mtg --sets=ltr
 ///   dart run tool/build_card_db.dart --game=pokemon --sets=base1,base2
 ///   dart run tool/build_card_db.dart --sets=ltr,base1,base2
+///   dart run tool/build_card_db.dart --hash-only  (rebuild hashes from existing cards)
 void main(List<String> args) async {
   final flags = _parseArgs(args);
   final outputPath = flags['output'] ?? 'assets/cards.db';
   final game = flags['game']; // null = both
   final setsFilter = flags['sets']?.split(',').toSet();
+  final hashOnly = flags.containsKey('hash-only');
 
-  // Clean previous output.
-  final outputFile = File(outputPath);
-  if (outputFile.existsSync()) {
-    outputFile.deleteSync();
+  if (!hashOnly) {
+    // Clean previous output.
+    final outputFile = File(outputPath);
+    if (outputFile.existsSync()) {
+      outputFile.deleteSync();
+    }
   }
 
   // Ensure assets directory exists.
@@ -35,21 +41,27 @@ void main(List<String> args) async {
   var totalCards = 0;
 
   try {
-    // MTG cards from Scryfall.
-    if (game == null || game == 'mtg') {
-      totalCards += await _importMtg(packer, setsFilter);
+    if (!hashOnly) {
+      // MTG cards from Scryfall.
+      if (game == null || game == 'mtg') {
+        totalCards += await _importMtg(packer, setsFilter);
+      }
+
+      // Pokemon cards from TCGdex.
+      if (game == null || game == 'pokemon') {
+        totalCards += await _importPokemon(packer, setsFilter);
+      }
+
+      packer.createIndexes();
     }
 
-    // Pokemon cards from TCGdex.
-    if (game == null || game == 'pokemon') {
-      totalCards += await _importPokemon(packer, setsFilter);
-    }
+    // Compute perceptual hashes for art crops.
+    final hashCount = await _computeHashes(packer, game, setsFilter);
 
-    packer.createIndexes();
     packer.compact();
 
     final sizeMb = packer.fileSize / (1024 * 1024);
-    stderr.writeln('\nDone! $totalCards cards -> '
+    stderr.writeln('\nDone! $totalCards cards, $hashCount hashes -> '
         '$outputPath (${sizeMb.toStringAsFixed(1)} MB)');
   } finally {
     packer.close();
@@ -133,11 +145,64 @@ Future<int> _importPokemon(DbPacker packer, Set<String>? setsFilter) async {
   return count;
 }
 
+Future<int> _computeHashes(
+    DbPacker packer, String? game, Set<String>? setsFilter) async {
+  stderr.writeln('\n=== Computing perceptual hashes ===');
+
+  // Get cards that have art crop URLs from the DB.
+  final cards = packer.getCardsWithArtCrops(game: game, sets: setsFilter);
+  if (cards.isEmpty) {
+    stderr.writeln('  No cards with art crop URLs found');
+    return 0;
+  }
+
+  // Get already-hashed IDs for resume support.
+  final existingIds = packer.getHashedCardIds();
+  stderr.writeln(
+      '  ${cards.length} cards with art crops, ${existingIds.length} already hashed');
+
+  final computer = PHashComputer();
+  final batch = <CardHash>[];
+  var count = 0;
+
+  try {
+    await for (final hash in computer.computeHashes(
+      cards,
+      skipIds: existingIds,
+      onProgress: (done, total) {
+        if (done % 50 == 0 || done == total) {
+          stderr.write('\r  Hashing: $done/$total  ');
+        }
+      },
+    )) {
+      batch.add(hash);
+      count++;
+
+      if (batch.length >= 500) {
+        packer.insertHashes(batch);
+        batch.clear();
+      }
+    }
+
+    if (batch.isNotEmpty) {
+      packer.insertHashes(batch);
+    }
+
+    stderr.writeln('\n  Computed $count new hashes');
+  } finally {
+    computer.close();
+  }
+
+  return count + existingIds.length;
+}
+
 Map<String, String?> _parseArgs(List<String> args) {
   final flags = <String, String?>{};
   for (final arg in args) {
     if (arg == '--full') {
       flags['full'] = null;
+    } else if (arg == '--hash-only') {
+      flags['hash-only'] = null;
     } else if (arg.startsWith('--game=')) {
       flags['game'] = arg.substring('--game='.length);
     } else if (arg.startsWith('--sets=')) {

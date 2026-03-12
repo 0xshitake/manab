@@ -1590,17 +1590,234 @@ class CardEntriesCompanion extends UpdateCompanion<CardEntry> {
   }
 }
 
+class $CardHashesTable extends CardHashes
+    with TableInfo<$CardHashesTable, CardHash> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CardHashesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _cardIdMeta = const VerificationMeta('cardId');
+  @override
+  late final GeneratedColumn<String> cardId = GeneratedColumn<String>(
+    'card_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gameMeta = const VerificationMeta('game');
+  @override
+  late final GeneratedColumn<String> game = GeneratedColumn<String>(
+    'game',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _phashValueMeta = const VerificationMeta(
+    'phashValue',
+  );
+  @override
+  late final GeneratedColumn<int> phashValue = GeneratedColumn<int>(
+    'phash_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _setCodeMeta = const VerificationMeta(
+    'setCode',
+  );
+  @override
+  late final GeneratedColumn<String> setCode = GeneratedColumn<String>(
+    'set_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [cardId, game, phashValue, setCode];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'card_hashes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CardHash> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('card_id')) {
+      context.handle(
+        _cardIdMeta,
+        cardId.isAcceptableOrUnknown(data['card_id']!, _cardIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cardIdMeta);
+    }
+    if (data.containsKey('game')) {
+      context.handle(
+        _gameMeta,
+        game.isAcceptableOrUnknown(data['game']!, _gameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gameMeta);
+    }
+    if (data.containsKey('phash_value')) {
+      context.handle(
+        _phashValueMeta,
+        phashValue.isAcceptableOrUnknown(data['phash_value']!, _phashValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_phashValueMeta);
+    }
+    if (data.containsKey('set_code')) {
+      context.handle(
+        _setCodeMeta,
+        setCode.isAcceptableOrUnknown(data['set_code']!, _setCodeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_setCodeMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {cardId};
+  @override
+  CardHash map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CardHash(
+      cardId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}card_id'],
+      )!,
+      game: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}game'],
+      )!,
+      phashValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}phash_value'],
+      )!,
+      setCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}set_code'],
+      )!,
+    );
+  }
+
+  @override
+  $CardHashesTable createAlias(String alias) {
+    return $CardHashesTable(attachedDatabase, alias);
+  }
+}
+
+class CardHashesCompanion extends UpdateCompanion<CardHash> {
+  final Value<String> cardId;
+  final Value<String> game;
+  final Value<int> phashValue;
+  final Value<String> setCode;
+  final Value<int> rowid;
+  const CardHashesCompanion({
+    this.cardId = const Value.absent(),
+    this.game = const Value.absent(),
+    this.phashValue = const Value.absent(),
+    this.setCode = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CardHashesCompanion.insert({
+    required String cardId,
+    required String game,
+    required int phashValue,
+    required String setCode,
+    this.rowid = const Value.absent(),
+  }) : cardId = Value(cardId),
+       game = Value(game),
+       phashValue = Value(phashValue),
+       setCode = Value(setCode);
+  static Insertable<CardHash> custom({
+    Expression<String>? cardId,
+    Expression<String>? game,
+    Expression<int>? phashValue,
+    Expression<String>? setCode,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (cardId != null) 'card_id': cardId,
+      if (game != null) 'game': game,
+      if (phashValue != null) 'phash_value': phashValue,
+      if (setCode != null) 'set_code': setCode,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CardHashesCompanion copyWith({
+    Value<String>? cardId,
+    Value<String>? game,
+    Value<int>? phashValue,
+    Value<String>? setCode,
+    Value<int>? rowid,
+  }) {
+    return CardHashesCompanion(
+      cardId: cardId ?? this.cardId,
+      game: game ?? this.game,
+      phashValue: phashValue ?? this.phashValue,
+      setCode: setCode ?? this.setCode,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (cardId.present) {
+      map['card_id'] = Variable<String>(cardId.value);
+    }
+    if (game.present) {
+      map['game'] = Variable<String>(game.value);
+    }
+    if (phashValue.present) {
+      map['phash_value'] = Variable<int>(phashValue.value);
+    }
+    if (setCode.present) {
+      map['set_code'] = Variable<String>(setCode.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CardHashesCompanion(')
+          ..write('cardId: $cardId, ')
+          ..write('game: $game, ')
+          ..write('phashValue: $phashValue, ')
+          ..write('setCode: $setCode, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $CachedCardsTable cachedCards = $CachedCardsTable(this);
   late final $BindersTable binders = $BindersTable(this);
   late final $CardEntriesTable cardEntries = $CardEntriesTable(this);
+  late final $CardHashesTable cardHashes = $CardHashesTable(this);
   late final CardsDao cardsDao = CardsDao(this as AppDatabase);
   late final BindersDao bindersDao = BindersDao(this as AppDatabase);
   late final CardEntriesDao cardEntriesDao = CardEntriesDao(
     this as AppDatabase,
   );
+  late final CardHashesDao cardHashesDao = CardHashesDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1609,6 +1826,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     cachedCards,
     binders,
     cardEntries,
+    cardHashes,
   ];
 }
 
@@ -2673,6 +2891,183 @@ typedef $$CardEntriesTableProcessedTableManager =
       CardEntry,
       PrefetchHooks Function()
     >;
+typedef $$CardHashesTableCreateCompanionBuilder =
+    CardHashesCompanion Function({
+      required String cardId,
+      required String game,
+      required int phashValue,
+      required String setCode,
+      Value<int> rowid,
+    });
+typedef $$CardHashesTableUpdateCompanionBuilder =
+    CardHashesCompanion Function({
+      Value<String> cardId,
+      Value<String> game,
+      Value<int> phashValue,
+      Value<String> setCode,
+      Value<int> rowid,
+    });
+
+class $$CardHashesTableFilterComposer
+    extends Composer<_$AppDatabase, $CardHashesTable> {
+  $$CardHashesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get cardId => $composableBuilder(
+    column: $table.cardId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get game => $composableBuilder(
+    column: $table.game,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get phashValue => $composableBuilder(
+    column: $table.phashValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get setCode => $composableBuilder(
+    column: $table.setCode,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CardHashesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CardHashesTable> {
+  $$CardHashesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get cardId => $composableBuilder(
+    column: $table.cardId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get game => $composableBuilder(
+    column: $table.game,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get phashValue => $composableBuilder(
+    column: $table.phashValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get setCode => $composableBuilder(
+    column: $table.setCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CardHashesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CardHashesTable> {
+  $$CardHashesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get cardId =>
+      $composableBuilder(column: $table.cardId, builder: (column) => column);
+
+  GeneratedColumn<String> get game =>
+      $composableBuilder(column: $table.game, builder: (column) => column);
+
+  GeneratedColumn<int> get phashValue => $composableBuilder(
+    column: $table.phashValue,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get setCode =>
+      $composableBuilder(column: $table.setCode, builder: (column) => column);
+}
+
+class $$CardHashesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CardHashesTable,
+          CardHash,
+          $$CardHashesTableFilterComposer,
+          $$CardHashesTableOrderingComposer,
+          $$CardHashesTableAnnotationComposer,
+          $$CardHashesTableCreateCompanionBuilder,
+          $$CardHashesTableUpdateCompanionBuilder,
+          (CardHash, BaseReferences<_$AppDatabase, $CardHashesTable, CardHash>),
+          CardHash,
+          PrefetchHooks Function()
+        > {
+  $$CardHashesTableTableManager(_$AppDatabase db, $CardHashesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CardHashesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CardHashesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CardHashesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> cardId = const Value.absent(),
+                Value<String> game = const Value.absent(),
+                Value<int> phashValue = const Value.absent(),
+                Value<String> setCode = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CardHashesCompanion(
+                cardId: cardId,
+                game: game,
+                phashValue: phashValue,
+                setCode: setCode,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String cardId,
+                required String game,
+                required int phashValue,
+                required String setCode,
+                Value<int> rowid = const Value.absent(),
+              }) => CardHashesCompanion.insert(
+                cardId: cardId,
+                game: game,
+                phashValue: phashValue,
+                setCode: setCode,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CardHashesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CardHashesTable,
+      CardHash,
+      $$CardHashesTableFilterComposer,
+      $$CardHashesTableOrderingComposer,
+      $$CardHashesTableAnnotationComposer,
+      $$CardHashesTableCreateCompanionBuilder,
+      $$CardHashesTableUpdateCompanionBuilder,
+      (CardHash, BaseReferences<_$AppDatabase, $CardHashesTable, CardHash>),
+      CardHash,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2683,4 +3078,6 @@ class $AppDatabaseManager {
       $$BindersTableTableManager(_db, _db.binders);
   $$CardEntriesTableTableManager get cardEntries =>
       $$CardEntriesTableTableManager(_db, _db.cardEntries);
+  $$CardHashesTableTableManager get cardHashes =>
+      $$CardHashesTableTableManager(_db, _db.cardHashes);
 }

@@ -24,9 +24,16 @@ class DetectionResult {
   final double scaleFactor;
 }
 
-/// OpenCV-based card detection and perspective warp service.
+/// Art crop pixel rectangles per game: (x, y, width, height).
+const _artCropRects = {
+  GameMode.mtg: (23, 98, 603, 332), // on 672×936
+  GameMode.pokemon: (60, 100, 555, 282), // on 734×1024
+};
+
+/// OpenCV-based card detection, warp, and hash pipeline.
 class ScannerService {
   bool _isProcessing = false;
+  final cv.PHash _hasher = cv.PHash();
 
   /// Whether a frame is currently being processed.
   bool get isProcessing => _isProcessing;
@@ -254,6 +261,52 @@ class ScannerService {
 
     transform.dispose();
     return warped;
+  }
+
+  /// Crop the art region from a warped card image.
+  cv.Mat cropArtRegion(cv.Mat warped, GameMode gameMode) {
+    final rect = _artCropRects[gameMode]!;
+    final (x, y, w, h) = rect;
+    return warped.region(cv.Rect(x, y, w, h));
+  }
+
+  /// Compute a perceptual hash of an art crop.
+  ///
+  /// Returns a 64-bit integer hash value.
+  int computeHash(cv.Mat artCrop) {
+    final hashMat = _hasher.compute(artCrop);
+    final value = _matToInt64(hashMat);
+    hashMat.dispose();
+    return value;
+  }
+
+  /// Full pipeline: detect → warp → crop art → hash.
+  ///
+  /// Returns the computed hash value, or null if detection fails.
+  Future<int?> detectAndHash(
+    Uint8List nv21Bytes,
+    int width,
+    int height,
+    List<cv.Point> corners,
+    GameMode gameMode,
+  ) async {
+    final warped = await warpCard(nv21Bytes, width, height, corners, gameMode);
+    final artCrop = cropArtRegion(warped, gameMode);
+    warped.dispose();
+
+    final hash = computeHash(artCrop);
+    artCrop.dispose();
+    return hash;
+  }
+
+  /// Convert a PHash result Mat (1×8 CV_8UC1) to a 64-bit integer.
+  static int _matToInt64(cv.Mat hashMat) {
+    var result = 0;
+    final data = hashMat.data;
+    for (var i = 0; i < 8 && i < data.length; i++) {
+      result |= data[i] << (56 - i * 8);
+    }
+    return result;
   }
 
   /// Euclidean distance between two points.
