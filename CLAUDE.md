@@ -42,6 +42,12 @@ tool/             # Build scripts (not shipped)
 - One Drift migration file per schema version bump: `migration_vN_to_vN+1.dart`
 - API calls use Firefox UA: `Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0`
 
+## Releases
+
+- CI builds APK on every push to master; creates a GitHub Release only on `v*` tags
+- GitHub Actions minutes are unlimited for public repos — no need to conserve builds
+- Always create a new tag for each release; never move/override existing tags
+
 ## Specs
 
 Each phase lives in `specs/NNN-name/` with `spec.md`, `plan.md`, `tasks.md`. Read all three before implementing. Mark tasks `[x]` in tasks.md as you complete them.
