@@ -42,7 +42,7 @@ class _FirstLaunchScreenState extends ConsumerState<FirstLaunchScreen> {
 
     if (mounted && _done) {
       await Future<void>.delayed(const Duration(milliseconds: 300));
-      if (mounted) context.go('/search');
+      if (mounted) context.go('/collection');
     }
   }
 

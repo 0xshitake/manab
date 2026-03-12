@@ -8,8 +8,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/database/app_database.dart';
+import '../data/database/daos/binders_dao.dart';
+import '../data/database/daos/card_entries_dao.dart';
 import '../data/database/daos/cards_dao.dart';
+import '../data/repositories/binder_repository.dart';
 import '../data/repositories/card_repository.dart';
+import '../data/services/export_service.dart';
 import '../data/services/scryfall_api_service.dart';
 import '../data/services/scanner_service.dart';
 import '../data/services/tcgdex_api_service.dart';
@@ -40,6 +44,14 @@ final cardsDaoProvider = Provider<CardsDao>((ref) {
   return ref.watch(appDatabaseProvider).cardsDao;
 });
 
+final bindersDaoProvider = Provider<BindersDao>((ref) {
+  return ref.watch(appDatabaseProvider).bindersDao;
+});
+
+final cardEntriesDaoProvider = Provider<CardEntriesDao>((ref) {
+  return ref.watch(appDatabaseProvider).cardEntriesDao;
+});
+
 // --- API Services ---
 
 final scryfallApiServiceProvider = Provider<ScryfallApiService>((ref) {
@@ -57,6 +69,22 @@ final cardRepositoryProvider = Provider<CardRepository>((ref) {
     cardsDao: ref.watch(cardsDaoProvider),
     scryfallApi: ref.watch(scryfallApiServiceProvider),
     tcgdexApi: ref.watch(tcgdexApiServiceProvider),
+  );
+});
+
+final binderRepositoryProvider = Provider<BinderRepository>((ref) {
+  return BinderRepositoryImpl(
+    bindersDao: ref.watch(bindersDaoProvider),
+    cardEntriesDao: ref.watch(cardEntriesDaoProvider),
+  );
+});
+
+// --- Services ---
+
+final exportServiceProvider = Provider<ExportService>((ref) {
+  return ExportService(
+    bindersDao: ref.watch(bindersDaoProvider),
+    cardEntriesDao: ref.watch(cardEntriesDaoProvider),
   );
 });
 

@@ -642,16 +642,974 @@ class CachedCardsCompanion extends UpdateCompanion<CachedCard> {
   }
 }
 
+class $BindersTable extends Binders with TableInfo<$BindersTable, Binder> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BindersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gameMeta = const VerificationMeta('game');
+  @override
+  late final GeneratedColumn<String> game = GeneratedColumn<String>(
+    'game',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, game, createdAt, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'binders';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Binder> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('game')) {
+      context.handle(
+        _gameMeta,
+        game.isAcceptableOrUnknown(data['game']!, _gameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gameMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Binder map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Binder(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      game: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}game'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BindersTable createAlias(String alias) {
+    return $BindersTable(attachedDatabase, alias);
+  }
+}
+
+class BindersCompanion extends UpdateCompanion<Binder> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> game;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const BindersCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.game = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BindersCompanion.insert({
+    required String id,
+    required String name,
+    required String game,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       game = Value(game),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<Binder> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? game,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (game != null) 'game': game,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BindersCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? game,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return BindersCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      game: game ?? this.game,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (game.present) {
+      map['game'] = Variable<String>(game.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BindersCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('game: $game, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CardEntriesTable extends CardEntries
+    with TableInfo<$CardEntriesTable, CardEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CardEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _binderIdMeta = const VerificationMeta(
+    'binderId',
+  );
+  @override
+  late final GeneratedColumn<String> binderId = GeneratedColumn<String>(
+    'binder_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gameMeta = const VerificationMeta('game');
+  @override
+  late final GeneratedColumn<String> game = GeneratedColumn<String>(
+    'game',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cardIdMeta = const VerificationMeta('cardId');
+  @override
+  late final GeneratedColumn<String> cardId = GeneratedColumn<String>(
+    'card_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _setCodeMeta = const VerificationMeta(
+    'setCode',
+  );
+  @override
+  late final GeneratedColumn<String> setCode = GeneratedColumn<String>(
+    'set_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _setNameMeta = const VerificationMeta(
+    'setName',
+  );
+  @override
+  late final GeneratedColumn<String> setName = GeneratedColumn<String>(
+    'set_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _collectorNumberMeta = const VerificationMeta(
+    'collectorNumber',
+  );
+  @override
+  late final GeneratedColumn<String> collectorNumber = GeneratedColumn<String>(
+    'collector_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
+  );
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+    'quantity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _foilMeta = const VerificationMeta('foil');
+  @override
+  late final GeneratedColumn<bool> foil = GeneratedColumn<bool>(
+    'foil',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("foil" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _languageMeta = const VerificationMeta(
+    'language',
+  );
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+    'language',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('en'),
+  );
+  static const VerificationMeta _conditionMeta = const VerificationMeta(
+    'condition',
+  );
+  @override
+  late final GeneratedColumn<String> condition = GeneratedColumn<String>(
+    'condition',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _purchasePriceMeta = const VerificationMeta(
+    'purchasePrice',
+  );
+  @override
+  late final GeneratedColumn<double> purchasePrice = GeneratedColumn<double>(
+    'purchase_price',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _purchaseCurrencyMeta = const VerificationMeta(
+    'purchaseCurrency',
+  );
+  @override
+  late final GeneratedColumn<String> purchaseCurrency = GeneratedColumn<String>(
+    'purchase_currency',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _imageUrlMeta = const VerificationMeta(
+    'imageUrl',
+  );
+  @override
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+    'image_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _addedAtMeta = const VerificationMeta(
+    'addedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> addedAt = GeneratedColumn<DateTime>(
+    'added_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    binderId,
+    game,
+    cardId,
+    name,
+    setCode,
+    setName,
+    collectorNumber,
+    quantity,
+    foil,
+    language,
+    condition,
+    purchasePrice,
+    purchaseCurrency,
+    notes,
+    imageUrl,
+    addedAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'card_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CardEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('binder_id')) {
+      context.handle(
+        _binderIdMeta,
+        binderId.isAcceptableOrUnknown(data['binder_id']!, _binderIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_binderIdMeta);
+    }
+    if (data.containsKey('game')) {
+      context.handle(
+        _gameMeta,
+        game.isAcceptableOrUnknown(data['game']!, _gameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gameMeta);
+    }
+    if (data.containsKey('card_id')) {
+      context.handle(
+        _cardIdMeta,
+        cardId.isAcceptableOrUnknown(data['card_id']!, _cardIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cardIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('set_code')) {
+      context.handle(
+        _setCodeMeta,
+        setCode.isAcceptableOrUnknown(data['set_code']!, _setCodeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_setCodeMeta);
+    }
+    if (data.containsKey('set_name')) {
+      context.handle(
+        _setNameMeta,
+        setName.isAcceptableOrUnknown(data['set_name']!, _setNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_setNameMeta);
+    }
+    if (data.containsKey('collector_number')) {
+      context.handle(
+        _collectorNumberMeta,
+        collectorNumber.isAcceptableOrUnknown(
+          data['collector_number']!,
+          _collectorNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_collectorNumberMeta);
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    }
+    if (data.containsKey('foil')) {
+      context.handle(
+        _foilMeta,
+        foil.isAcceptableOrUnknown(data['foil']!, _foilMeta),
+      );
+    }
+    if (data.containsKey('language')) {
+      context.handle(
+        _languageMeta,
+        language.isAcceptableOrUnknown(data['language']!, _languageMeta),
+      );
+    }
+    if (data.containsKey('condition')) {
+      context.handle(
+        _conditionMeta,
+        condition.isAcceptableOrUnknown(data['condition']!, _conditionMeta),
+      );
+    }
+    if (data.containsKey('purchase_price')) {
+      context.handle(
+        _purchasePriceMeta,
+        purchasePrice.isAcceptableOrUnknown(
+          data['purchase_price']!,
+          _purchasePriceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('purchase_currency')) {
+      context.handle(
+        _purchaseCurrencyMeta,
+        purchaseCurrency.isAcceptableOrUnknown(
+          data['purchase_currency']!,
+          _purchaseCurrencyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('image_url')) {
+      context.handle(
+        _imageUrlMeta,
+        imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta),
+      );
+    }
+    if (data.containsKey('added_at')) {
+      context.handle(
+        _addedAtMeta,
+        addedAt.isAcceptableOrUnknown(data['added_at']!, _addedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_addedAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CardEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CardEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      binderId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}binder_id'],
+      )!,
+      game: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}game'],
+      )!,
+      cardId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}card_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      setCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}set_code'],
+      )!,
+      setName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}set_name'],
+      )!,
+      collectorNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}collector_number'],
+      )!,
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      foil: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}foil'],
+      )!,
+      language: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language'],
+      )!,
+      condition: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}condition'],
+      ),
+      purchasePrice: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}purchase_price'],
+      ),
+      purchaseCurrency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}purchase_currency'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      imageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}image_url'],
+      ),
+      addedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}added_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $CardEntriesTable createAlias(String alias) {
+    return $CardEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class CardEntriesCompanion extends UpdateCompanion<CardEntry> {
+  final Value<String> id;
+  final Value<String> binderId;
+  final Value<String> game;
+  final Value<String> cardId;
+  final Value<String> name;
+  final Value<String> setCode;
+  final Value<String> setName;
+  final Value<String> collectorNumber;
+  final Value<int> quantity;
+  final Value<bool> foil;
+  final Value<String> language;
+  final Value<String?> condition;
+  final Value<double?> purchasePrice;
+  final Value<String?> purchaseCurrency;
+  final Value<String?> notes;
+  final Value<String?> imageUrl;
+  final Value<DateTime> addedAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const CardEntriesCompanion({
+    this.id = const Value.absent(),
+    this.binderId = const Value.absent(),
+    this.game = const Value.absent(),
+    this.cardId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.setCode = const Value.absent(),
+    this.setName = const Value.absent(),
+    this.collectorNumber = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.foil = const Value.absent(),
+    this.language = const Value.absent(),
+    this.condition = const Value.absent(),
+    this.purchasePrice = const Value.absent(),
+    this.purchaseCurrency = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.addedAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CardEntriesCompanion.insert({
+    required String id,
+    required String binderId,
+    required String game,
+    required String cardId,
+    required String name,
+    required String setCode,
+    required String setName,
+    required String collectorNumber,
+    this.quantity = const Value.absent(),
+    this.foil = const Value.absent(),
+    this.language = const Value.absent(),
+    this.condition = const Value.absent(),
+    this.purchasePrice = const Value.absent(),
+    this.purchaseCurrency = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    required DateTime addedAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       binderId = Value(binderId),
+       game = Value(game),
+       cardId = Value(cardId),
+       name = Value(name),
+       setCode = Value(setCode),
+       setName = Value(setName),
+       collectorNumber = Value(collectorNumber),
+       addedAt = Value(addedAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<CardEntry> custom({
+    Expression<String>? id,
+    Expression<String>? binderId,
+    Expression<String>? game,
+    Expression<String>? cardId,
+    Expression<String>? name,
+    Expression<String>? setCode,
+    Expression<String>? setName,
+    Expression<String>? collectorNumber,
+    Expression<int>? quantity,
+    Expression<bool>? foil,
+    Expression<String>? language,
+    Expression<String>? condition,
+    Expression<double>? purchasePrice,
+    Expression<String>? purchaseCurrency,
+    Expression<String>? notes,
+    Expression<String>? imageUrl,
+    Expression<DateTime>? addedAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (binderId != null) 'binder_id': binderId,
+      if (game != null) 'game': game,
+      if (cardId != null) 'card_id': cardId,
+      if (name != null) 'name': name,
+      if (setCode != null) 'set_code': setCode,
+      if (setName != null) 'set_name': setName,
+      if (collectorNumber != null) 'collector_number': collectorNumber,
+      if (quantity != null) 'quantity': quantity,
+      if (foil != null) 'foil': foil,
+      if (language != null) 'language': language,
+      if (condition != null) 'condition': condition,
+      if (purchasePrice != null) 'purchase_price': purchasePrice,
+      if (purchaseCurrency != null) 'purchase_currency': purchaseCurrency,
+      if (notes != null) 'notes': notes,
+      if (imageUrl != null) 'image_url': imageUrl,
+      if (addedAt != null) 'added_at': addedAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CardEntriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? binderId,
+    Value<String>? game,
+    Value<String>? cardId,
+    Value<String>? name,
+    Value<String>? setCode,
+    Value<String>? setName,
+    Value<String>? collectorNumber,
+    Value<int>? quantity,
+    Value<bool>? foil,
+    Value<String>? language,
+    Value<String?>? condition,
+    Value<double?>? purchasePrice,
+    Value<String?>? purchaseCurrency,
+    Value<String?>? notes,
+    Value<String?>? imageUrl,
+    Value<DateTime>? addedAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return CardEntriesCompanion(
+      id: id ?? this.id,
+      binderId: binderId ?? this.binderId,
+      game: game ?? this.game,
+      cardId: cardId ?? this.cardId,
+      name: name ?? this.name,
+      setCode: setCode ?? this.setCode,
+      setName: setName ?? this.setName,
+      collectorNumber: collectorNumber ?? this.collectorNumber,
+      quantity: quantity ?? this.quantity,
+      foil: foil ?? this.foil,
+      language: language ?? this.language,
+      condition: condition ?? this.condition,
+      purchasePrice: purchasePrice ?? this.purchasePrice,
+      purchaseCurrency: purchaseCurrency ?? this.purchaseCurrency,
+      notes: notes ?? this.notes,
+      imageUrl: imageUrl ?? this.imageUrl,
+      addedAt: addedAt ?? this.addedAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (binderId.present) {
+      map['binder_id'] = Variable<String>(binderId.value);
+    }
+    if (game.present) {
+      map['game'] = Variable<String>(game.value);
+    }
+    if (cardId.present) {
+      map['card_id'] = Variable<String>(cardId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (setCode.present) {
+      map['set_code'] = Variable<String>(setCode.value);
+    }
+    if (setName.present) {
+      map['set_name'] = Variable<String>(setName.value);
+    }
+    if (collectorNumber.present) {
+      map['collector_number'] = Variable<String>(collectorNumber.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (foil.present) {
+      map['foil'] = Variable<bool>(foil.value);
+    }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (condition.present) {
+      map['condition'] = Variable<String>(condition.value);
+    }
+    if (purchasePrice.present) {
+      map['purchase_price'] = Variable<double>(purchasePrice.value);
+    }
+    if (purchaseCurrency.present) {
+      map['purchase_currency'] = Variable<String>(purchaseCurrency.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
+    if (addedAt.present) {
+      map['added_at'] = Variable<DateTime>(addedAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CardEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('binderId: $binderId, ')
+          ..write('game: $game, ')
+          ..write('cardId: $cardId, ')
+          ..write('name: $name, ')
+          ..write('setCode: $setCode, ')
+          ..write('setName: $setName, ')
+          ..write('collectorNumber: $collectorNumber, ')
+          ..write('quantity: $quantity, ')
+          ..write('foil: $foil, ')
+          ..write('language: $language, ')
+          ..write('condition: $condition, ')
+          ..write('purchasePrice: $purchasePrice, ')
+          ..write('purchaseCurrency: $purchaseCurrency, ')
+          ..write('notes: $notes, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('addedAt: $addedAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $CachedCardsTable cachedCards = $CachedCardsTable(this);
+  late final $BindersTable binders = $BindersTable(this);
+  late final $CardEntriesTable cardEntries = $CardEntriesTable(this);
   late final CardsDao cardsDao = CardsDao(this as AppDatabase);
+  late final BindersDao bindersDao = BindersDao(this as AppDatabase);
+  late final CardEntriesDao cardEntriesDao = CardEntriesDao(
+    this as AppDatabase,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [cachedCards];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    cachedCards,
+    binders,
+    cardEntries,
+  ];
 }
 
 typedef $$CachedCardsTableCreateCompanionBuilder =
@@ -1071,10 +2029,658 @@ typedef $$CachedCardsTableProcessedTableManager =
       CachedCard,
       PrefetchHooks Function()
     >;
+typedef $$BindersTableCreateCompanionBuilder =
+    BindersCompanion Function({
+      required String id,
+      required String name,
+      required String game,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$BindersTableUpdateCompanionBuilder =
+    BindersCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> game,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$BindersTableFilterComposer
+    extends Composer<_$AppDatabase, $BindersTable> {
+  $$BindersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get game => $composableBuilder(
+    column: $table.game,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BindersTableOrderingComposer
+    extends Composer<_$AppDatabase, $BindersTable> {
+  $$BindersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get game => $composableBuilder(
+    column: $table.game,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BindersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BindersTable> {
+  $$BindersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get game =>
+      $composableBuilder(column: $table.game, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$BindersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BindersTable,
+          Binder,
+          $$BindersTableFilterComposer,
+          $$BindersTableOrderingComposer,
+          $$BindersTableAnnotationComposer,
+          $$BindersTableCreateCompanionBuilder,
+          $$BindersTableUpdateCompanionBuilder,
+          (Binder, BaseReferences<_$AppDatabase, $BindersTable, Binder>),
+          Binder,
+          PrefetchHooks Function()
+        > {
+  $$BindersTableTableManager(_$AppDatabase db, $BindersTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BindersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BindersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BindersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> game = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BindersCompanion(
+                id: id,
+                name: name,
+                game: game,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String game,
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => BindersCompanion.insert(
+                id: id,
+                name: name,
+                game: game,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BindersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BindersTable,
+      Binder,
+      $$BindersTableFilterComposer,
+      $$BindersTableOrderingComposer,
+      $$BindersTableAnnotationComposer,
+      $$BindersTableCreateCompanionBuilder,
+      $$BindersTableUpdateCompanionBuilder,
+      (Binder, BaseReferences<_$AppDatabase, $BindersTable, Binder>),
+      Binder,
+      PrefetchHooks Function()
+    >;
+typedef $$CardEntriesTableCreateCompanionBuilder =
+    CardEntriesCompanion Function({
+      required String id,
+      required String binderId,
+      required String game,
+      required String cardId,
+      required String name,
+      required String setCode,
+      required String setName,
+      required String collectorNumber,
+      Value<int> quantity,
+      Value<bool> foil,
+      Value<String> language,
+      Value<String?> condition,
+      Value<double?> purchasePrice,
+      Value<String?> purchaseCurrency,
+      Value<String?> notes,
+      Value<String?> imageUrl,
+      required DateTime addedAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$CardEntriesTableUpdateCompanionBuilder =
+    CardEntriesCompanion Function({
+      Value<String> id,
+      Value<String> binderId,
+      Value<String> game,
+      Value<String> cardId,
+      Value<String> name,
+      Value<String> setCode,
+      Value<String> setName,
+      Value<String> collectorNumber,
+      Value<int> quantity,
+      Value<bool> foil,
+      Value<String> language,
+      Value<String?> condition,
+      Value<double?> purchasePrice,
+      Value<String?> purchaseCurrency,
+      Value<String?> notes,
+      Value<String?> imageUrl,
+      Value<DateTime> addedAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$CardEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CardEntriesTable> {
+  $$CardEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get binderId => $composableBuilder(
+    column: $table.binderId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get game => $composableBuilder(
+    column: $table.game,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cardId => $composableBuilder(
+    column: $table.cardId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get setCode => $composableBuilder(
+    column: $table.setCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get setName => $composableBuilder(
+    column: $table.setName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get collectorNumber => $composableBuilder(
+    column: $table.collectorNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get foil => $composableBuilder(
+    column: $table.foil,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get language => $composableBuilder(
+    column: $table.language,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get condition => $composableBuilder(
+    column: $table.condition,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get purchasePrice => $composableBuilder(
+    column: $table.purchasePrice,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get purchaseCurrency => $composableBuilder(
+    column: $table.purchaseCurrency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CardEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CardEntriesTable> {
+  $$CardEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get binderId => $composableBuilder(
+    column: $table.binderId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get game => $composableBuilder(
+    column: $table.game,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cardId => $composableBuilder(
+    column: $table.cardId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get setCode => $composableBuilder(
+    column: $table.setCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get setName => $composableBuilder(
+    column: $table.setName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get collectorNumber => $composableBuilder(
+    column: $table.collectorNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get foil => $composableBuilder(
+    column: $table.foil,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get language => $composableBuilder(
+    column: $table.language,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get condition => $composableBuilder(
+    column: $table.condition,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get purchasePrice => $composableBuilder(
+    column: $table.purchasePrice,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get purchaseCurrency => $composableBuilder(
+    column: $table.purchaseCurrency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get addedAt => $composableBuilder(
+    column: $table.addedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CardEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CardEntriesTable> {
+  $$CardEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get binderId =>
+      $composableBuilder(column: $table.binderId, builder: (column) => column);
+
+  GeneratedColumn<String> get game =>
+      $composableBuilder(column: $table.game, builder: (column) => column);
+
+  GeneratedColumn<String> get cardId =>
+      $composableBuilder(column: $table.cardId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get setCode =>
+      $composableBuilder(column: $table.setCode, builder: (column) => column);
+
+  GeneratedColumn<String> get setName =>
+      $composableBuilder(column: $table.setName, builder: (column) => column);
+
+  GeneratedColumn<String> get collectorNumber => $composableBuilder(
+    column: $table.collectorNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<bool> get foil =>
+      $composableBuilder(column: $table.foil, builder: (column) => column);
+
+  GeneratedColumn<String> get language =>
+      $composableBuilder(column: $table.language, builder: (column) => column);
+
+  GeneratedColumn<String> get condition =>
+      $composableBuilder(column: $table.condition, builder: (column) => column);
+
+  GeneratedColumn<double> get purchasePrice => $composableBuilder(
+    column: $table.purchasePrice,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get purchaseCurrency => $composableBuilder(
+    column: $table.purchaseCurrency,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get addedAt =>
+      $composableBuilder(column: $table.addedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$CardEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CardEntriesTable,
+          CardEntry,
+          $$CardEntriesTableFilterComposer,
+          $$CardEntriesTableOrderingComposer,
+          $$CardEntriesTableAnnotationComposer,
+          $$CardEntriesTableCreateCompanionBuilder,
+          $$CardEntriesTableUpdateCompanionBuilder,
+          (
+            CardEntry,
+            BaseReferences<_$AppDatabase, $CardEntriesTable, CardEntry>,
+          ),
+          CardEntry,
+          PrefetchHooks Function()
+        > {
+  $$CardEntriesTableTableManager(_$AppDatabase db, $CardEntriesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CardEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CardEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CardEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> binderId = const Value.absent(),
+                Value<String> game = const Value.absent(),
+                Value<String> cardId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> setCode = const Value.absent(),
+                Value<String> setName = const Value.absent(),
+                Value<String> collectorNumber = const Value.absent(),
+                Value<int> quantity = const Value.absent(),
+                Value<bool> foil = const Value.absent(),
+                Value<String> language = const Value.absent(),
+                Value<String?> condition = const Value.absent(),
+                Value<double?> purchasePrice = const Value.absent(),
+                Value<String?> purchaseCurrency = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                Value<DateTime> addedAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CardEntriesCompanion(
+                id: id,
+                binderId: binderId,
+                game: game,
+                cardId: cardId,
+                name: name,
+                setCode: setCode,
+                setName: setName,
+                collectorNumber: collectorNumber,
+                quantity: quantity,
+                foil: foil,
+                language: language,
+                condition: condition,
+                purchasePrice: purchasePrice,
+                purchaseCurrency: purchaseCurrency,
+                notes: notes,
+                imageUrl: imageUrl,
+                addedAt: addedAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String binderId,
+                required String game,
+                required String cardId,
+                required String name,
+                required String setCode,
+                required String setName,
+                required String collectorNumber,
+                Value<int> quantity = const Value.absent(),
+                Value<bool> foil = const Value.absent(),
+                Value<String> language = const Value.absent(),
+                Value<String?> condition = const Value.absent(),
+                Value<double?> purchasePrice = const Value.absent(),
+                Value<String?> purchaseCurrency = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                required DateTime addedAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => CardEntriesCompanion.insert(
+                id: id,
+                binderId: binderId,
+                game: game,
+                cardId: cardId,
+                name: name,
+                setCode: setCode,
+                setName: setName,
+                collectorNumber: collectorNumber,
+                quantity: quantity,
+                foil: foil,
+                language: language,
+                condition: condition,
+                purchasePrice: purchasePrice,
+                purchaseCurrency: purchaseCurrency,
+                notes: notes,
+                imageUrl: imageUrl,
+                addedAt: addedAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CardEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CardEntriesTable,
+      CardEntry,
+      $$CardEntriesTableFilterComposer,
+      $$CardEntriesTableOrderingComposer,
+      $$CardEntriesTableAnnotationComposer,
+      $$CardEntriesTableCreateCompanionBuilder,
+      $$CardEntriesTableUpdateCompanionBuilder,
+      (CardEntry, BaseReferences<_$AppDatabase, $CardEntriesTable, CardEntry>),
+      CardEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$CachedCardsTableTableManager get cachedCards =>
       $$CachedCardsTableTableManager(_db, _db.cachedCards);
+  $$BindersTableTableManager get binders =>
+      $$BindersTableTableManager(_db, _db.binders);
+  $$CardEntriesTableTableManager get cardEntries =>
+      $$CardEntriesTableTableManager(_db, _db.cardEntries);
 }

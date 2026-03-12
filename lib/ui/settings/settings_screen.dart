@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../config/di.dart';
@@ -17,6 +18,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _isUpdating = false;
+  bool _isExporting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           const Divider(),
 
+          // Export collection
+          ListTile(
+            leading: const Icon(Icons.upload_file),
+            title: const Text('Export Collection (JSON)'),
+            subtitle: const Text('Share your collection as a JSON file'),
+            trailing: _isExporting
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : FilledButton.tonal(
+                    onPressed: _exportCollection,
+                    child: const Text('Export'),
+                  ),
+          ),
+          const Divider(),
+
           // Downloaded sets
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -126,6 +146,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       );
     } finally {
       if (mounted) setState(() => _isUpdating = false);
+    }
+  }
+
+  Future<void> _exportCollection() async {
+    setState(() => _isExporting = true);
+
+    try {
+      final exportService = ref.read(exportServiceProvider);
+      final filePath = await exportService.exportToJson();
+
+      if (!mounted) return;
+
+      await Share.shareXFiles([XFile(filePath)]);
+    } on Exception catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Export failed: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isExporting = false);
     }
   }
 }

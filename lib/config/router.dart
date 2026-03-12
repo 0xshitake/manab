@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../ui/card_browser/card_browser_screen.dart';
 import '../ui/card_browser/card_detail_screen.dart';
+import '../ui/collection/binder_detail_screen.dart';
+import '../ui/collection/collection_screen.dart';
 import '../ui/core/widgets/game_mode_picker.dart';
 import '../ui/first_launch/first_launch_screen.dart';
 import '../ui/scanner/scanner_screen.dart';
@@ -14,7 +16,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   final initialGameMode = ref.read(gameModeProvider);
 
   return GoRouter(
-    initialLocation: initialGameMode == null ? '/welcome' : '/search',
+    initialLocation: initialGameMode == null ? '/welcome' : '/collection',
     routes: [
       GoRoute(
         path: '/welcome',
@@ -23,6 +25,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/setup',
         builder: (context, state) => const FirstLaunchScreen(),
+      ),
+      GoRoute(
+        path: '/collection',
+        builder: (context, state) => const CollectionScreen(),
+      ),
+      GoRoute(
+        path: '/binder/:id',
+        builder: (context, state) {
+          final binderId = state.pathParameters['id']!;
+          return BinderDetailScreen(binderId: binderId);
+        },
       ),
       GoRoute(
         path: '/search',

@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/di.dart';
 import '../../domain/card.dart';
+import '../../domain/card_entry.dart';
+import '../collection/widgets/add_to_binder_sheet.dart';
 import 'widgets/price_display.dart';
 
 /// Shows full card details including image, set, rarity, type, and prices.
@@ -28,6 +30,22 @@ class CardDetailScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
       ),
+      floatingActionButton: cardFuture.value != null
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                final card = cardFuture.value!;
+                final added = await AddToBinderSheet.show(context, card);
+                if (added == true && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Card added to binder')),
+                  );
+                  ref.invalidate(_cardBindersProvider(cardId));
+                }
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Add to binder'),
+            )
+          : null,
     );
   }
 }
@@ -37,13 +55,39 @@ final _cardDetailProvider =
   return ref.watch(cardsDaoProvider).getById(cardId);
 });
 
-class _CardDetailBody extends StatelessWidget {
+/// Watches which binders contain this card.
+final _cardBindersProvider =
+    FutureProvider.family<List<_CardInBinder>, String>((ref, cardId) async {
+  final entries =
+      await ref.watch(binderRepositoryProvider).getEntriesForCard(cardId);
+  final db = ref.watch(appDatabaseProvider);
+
+  final results = <_CardInBinder>[];
+  for (final entry in entries) {
+    final binder = await db.bindersDao.getById(entry.binderId);
+    if (binder != null) {
+      results.add(_CardInBinder(binderName: binder.name, entry: entry));
+    }
+  }
+  return results;
+});
+
+class _CardInBinder {
+  final String binderName;
+  final CardEntry entry;
+
+  const _CardInBinder({required this.binderName, required this.entry});
+}
+
+class _CardDetailBody extends ConsumerWidget {
   const _CardDetailBody({required this.card});
 
   final CachedCard card;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bindersAsync = ref.watch(_cardBindersProvider(card.cardId));
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -87,6 +131,38 @@ class _CardDetailBody extends StatelessWidget {
 
           // Prices
           PriceDisplay(card: card),
+
+          // Binders containing this card
+          bindersAsync.when(
+            data: (binders) {
+              if (binders.isEmpty) return const SizedBox.shrink();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Text('In your collection',
+                      style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  for (final item in binders)
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.folder_outlined, size: 20),
+                      title: Text(item.binderName),
+                      subtitle: Text(
+                        'x${item.entry.quantity}'
+                        '${item.entry.foil ? ', Foil' : ''}'
+                        '${item.entry.condition != null ? ', ${item.entry.condition!.toUpperCase()}' : ''}',
+                      ),
+                    ),
+                ],
+              );
+            },
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
+
+          // Padding for FAB
+          const SizedBox(height: 80),
         ],
       ),
     );
