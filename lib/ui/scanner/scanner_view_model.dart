@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
@@ -18,6 +19,7 @@ class ScannerState {
     this.croppedCardSize,
     this.gameMode = GameMode.mtg,
     this.error,
+    this.debugInfo,
     this.processingTimeMs,
   });
 
@@ -34,6 +36,9 @@ class ScannerState {
   final GameMode gameMode;
   final String? error;
 
+  /// Debug info about frame processing.
+  final String? debugInfo;
+
   /// Last processing time in milliseconds.
   final int? processingTimeMs;
 
@@ -45,6 +50,7 @@ class ScannerState {
     (int, int)? croppedCardSize,
     GameMode? gameMode,
     String? error,
+    String? debugInfo,
     int? processingTimeMs,
     bool clearDetection = false,
     bool clearCroppedCard = false,
@@ -61,6 +67,7 @@ class ScannerState {
           clearCroppedCard ? null : (croppedCardSize ?? this.croppedCardSize),
       gameMode: gameMode ?? this.gameMode,
       error: clearError ? null : (error ?? this.error),
+      debugInfo: debugInfo ?? this.debugInfo,
       processingTimeMs: processingTimeMs ?? this.processingTimeMs,
     );
   }
@@ -116,7 +123,7 @@ class ScannerViewModel extends Notifier<ScannerState> {
   void _onCameraFrame(CameraImage image) {
     if (_scanner.isProcessing) return;
 
-    // Combine NV21 planes into single buffer.
+    // Combine NV21 planes into single buffer, respecting row stride.
     final nv21 = _combineNv21Planes(image);
     final width = image.width;
     final height = image.height;
@@ -125,11 +132,51 @@ class ScannerViewModel extends Notifier<ScannerState> {
   }
 
   Uint8List _combineNv21Planes(CameraImage image) {
-    final yPlane = image.planes[0].bytes;
-    final vuPlane = image.planes[1].bytes;
-    final nv21 = Uint8List(yPlane.length + vuPlane.length);
-    nv21.setRange(0, yPlane.length, yPlane);
-    nv21.setRange(yPlane.length, nv21.length, vuPlane);
+    final width = image.width;
+    final height = image.height;
+    final yPlane = image.planes[0];
+    final yRowStride = yPlane.bytesPerRow;
+
+    // Total NV21 size: width * height * 1.5
+    final nv21 = Uint8List(width * height + width * (height ~/ 2));
+
+    // Copy Y plane, stripping row stride padding if present.
+    if (yRowStride == width) {
+      nv21.setRange(0, width * height, yPlane.bytes);
+    } else {
+      for (int row = 0; row < height; row++) {
+        nv21.setRange(
+          row * width,
+          (row + 1) * width,
+          yPlane.bytes.buffer.asUint8List(
+            yPlane.bytes.offsetInBytes + row * yRowStride,
+            width,
+          ),
+        );
+      }
+    }
+
+    // Copy VU plane. On Android NV21, planes[1] contains interleaved VU data.
+    final vuPlane = image.planes[1];
+    final vuRowStride = vuPlane.bytesPerRow;
+    final vuHeight = height ~/ 2;
+    final ySize = width * height;
+
+    if (vuRowStride == width) {
+      nv21.setRange(ySize, ySize + width * vuHeight, vuPlane.bytes);
+    } else {
+      for (int row = 0; row < vuHeight; row++) {
+        nv21.setRange(
+          ySize + row * width,
+          ySize + (row + 1) * width,
+          vuPlane.bytes.buffer.asUint8List(
+            vuPlane.bytes.offsetInBytes + row * vuRowStride,
+            width,
+          ),
+        );
+      }
+    }
+
     return nv21;
   }
 
@@ -140,41 +187,54 @@ class ScannerViewModel extends Notifier<ScannerState> {
   ) async {
     final sw = Stopwatch()..start();
 
-    // 1. Detect card borders.
-    final detection = await _scanner.detectCard(nv21, width, height);
-    if (detection == null) {
+    try {
+      // 1. Detect card borders.
+      final detection = await _scanner.detectCard(nv21, width, height);
+      if (detection == null) {
+        state = state.copyWith(
+          clearDetection: true,
+          clearCroppedCard: true,
+          processingTimeMs: sw.elapsedMilliseconds,
+          debugInfo: '${width}x$height no card | ${sw.elapsedMilliseconds}ms',
+        );
+        return;
+      }
+
+      // 2. Warp to standard card size.
+      final warped = await _scanner.warpCard(
+        nv21,
+        width,
+        height,
+        detection.corners,
+        state.gameMode,
+      );
+
+      // 3. Convert BGR Mat to RGBA bytes for Flutter display.
+      final rgba = cv.cvtColor(warped, cv.COLOR_BGR2RGBA);
+      final rgbaBytes = Uint8List.fromList(rgba.data);
+      final cardSize = (rgba.cols, rgba.rows);
+      rgba.dispose();
+      warped.dispose();
+
+      sw.stop();
+
+      state = state.copyWith(
+        detectionResult: detection,
+        croppedCardBytes: rgbaBytes,
+        croppedCardSize: cardSize,
+        processingTimeMs: sw.elapsedMilliseconds,
+        debugInfo: '${width}x$height FOUND | ${sw.elapsedMilliseconds}ms',
+      );
+    } catch (e, st) {
+      sw.stop();
+      developer.log('Frame processing error: $e', stackTrace: st);
       state = state.copyWith(
         clearDetection: true,
         clearCroppedCard: true,
         processingTimeMs: sw.elapsedMilliseconds,
+        debugInfo: 'ERR: $e',
       );
-      return;
     }
-
-    // 2. Warp to standard card size.
-    final warped = await _scanner.warpCard(
-      nv21,
-      width,
-      height,
-      detection.corners,
-      state.gameMode,
-    );
-
-    // 3. Convert BGR Mat to RGBA bytes for Flutter display.
-    final rgba = cv.cvtColor(warped, cv.COLOR_BGR2RGBA);
-    final rgbaBytes = Uint8List.fromList(rgba.data);
-    final cardSize = (rgba.cols, rgba.rows);
-    rgba.dispose();
-    warped.dispose();
-
-    sw.stop();
-
-    state = state.copyWith(
-      detectionResult: detection,
-      croppedCardBytes: rgbaBytes,
-      croppedCardSize: cardSize,
-      processingTimeMs: sw.elapsedMilliseconds,
-    );
   }
 
   void toggleGameMode() {

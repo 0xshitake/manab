@@ -91,6 +91,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
               gameMode: scannerState.gameMode,
               processingTimeMs: scannerState.processingTimeMs,
               hasDetection: scannerState.detectionResult != null,
+              debugInfo: scannerState.debugInfo,
               onToggleGameMode: () => ref
                   .read(scannerViewModelProvider.notifier)
                   .toggleGameMode(),
@@ -120,12 +121,14 @@ class _DebugInfoBar extends StatelessWidget {
     required this.gameMode,
     required this.processingTimeMs,
     required this.hasDetection,
+    required this.debugInfo,
     required this.onToggleGameMode,
   });
 
   final dynamic gameMode;
   final int? processingTimeMs;
   final bool hasDetection;
+  final String? debugInfo;
   final VoidCallback onToggleGameMode;
 
   @override
@@ -136,44 +139,65 @@ class _DebugInfoBar extends StatelessWidget {
         color: Colors.black54,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Game mode toggle.
-          GestureDetector(
-            onTap: onToggleGameMode,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: hasDetection ? Colors.green : Colors.grey,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                gameMode.toString().split('.').last.toUpperCase(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+          Row(
+            children: [
+              // Game mode toggle.
+              GestureDetector(
+                onTap: onToggleGameMode,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: hasDetection ? Colors.green : Colors.grey,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    gameMode.toString().split('.').last.toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              // Processing time.
+              if (processingTimeMs != null)
+                Text(
+                  '${processingTimeMs}ms',
+                  style: TextStyle(
+                    color:
+                        processingTimeMs! < 100 ? Colors.green : Colors.orange,
+                    fontSize: 12,
+                  ),
+                ),
+              const Spacer(),
+              // Detection status.
+              Icon(
+                hasDetection ? Icons.crop_free : Icons.search,
+                color: hasDetection ? Colors.green : Colors.grey,
+                size: 20,
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          // Processing time.
-          if (processingTimeMs != null)
+          if (debugInfo != null) ...[
+            const SizedBox(height: 4),
             Text(
-              '${processingTimeMs}ms',
+              debugInfo!,
               style: TextStyle(
-                color: processingTimeMs! < 100 ? Colors.green : Colors.orange,
-                fontSize: 12,
+                color: debugInfo!.startsWith('ERR')
+                    ? Colors.red
+                    : Colors.white70,
+                fontSize: 10,
+                fontFamily: 'monospace',
               ),
             ),
-          const Spacer(),
-          // Detection status.
-          Icon(
-            hasDetection ? Icons.crop_free : Icons.search,
-            color: hasDetection ? Colors.green : Colors.grey,
-            size: 20,
-          ),
+          ],
         ],
       ),
     );

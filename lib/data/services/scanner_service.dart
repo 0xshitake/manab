@@ -91,17 +91,28 @@ class ScannerService {
       );
       blur.dispose();
 
+      // 3b. Dilate to close small gaps in edges.
+      final kernel = cv.getStructuringElement(cv.MORPH_RECT, (3, 3));
+      final dilated = await cv.dilateAsync(edges, kernel);
+      edges.dispose();
+      kernel.dispose();
+
       // 4. Find contours
       final (contours, hierarchy) = await cv.findContoursAsync(
-        edges,
+        dilated,
         cv.RETR_EXTERNAL,
         cv.CHAIN_APPROX_SIMPLE,
       );
-      edges.dispose();
+      dilated.dispose();
       hierarchy.dispose();
 
       // 5. Find best card-shaped quadrilateral
-      final result = await _findBestQuadrilateral(contours, scaleFactor);
+      final result = await _findBestQuadrilateral(
+        contours,
+        scaleFactor,
+        AppConfig.detectionDownsampleWidth,
+        smallHeight,
+      );
       contours.dispose();
 
       return result;
@@ -133,16 +144,20 @@ class ScannerService {
   Future<DetectionResult?> _findBestQuadrilateral(
     cv.VecVecPoint contours,
     double scaleFactor,
+    int imageWidth,
+    int imageHeight,
   ) async {
     double bestArea = 0;
     DetectionResult? bestResult;
+
+    // Minimum contour area: 2% of the downsampled image.
+    final minArea = imageWidth * imageHeight * 0.02;
 
     for (int i = 0; i < contours.length; i++) {
       final contour = contours[i];
       final area = await cv.contourAreaAsync(contour);
 
-      // Skip tiny contours (less than 5% of the detection image area).
-      if (area < 480 * 360 * 0.05) continue;
+      if (area < minArea) continue;
 
       final perimeter = await cv.arcLengthAsync(contour, true);
       final approx = await cv.approxPolyDPAsync(
